@@ -1,0 +1,15 @@
+#no-match {
+    color: red;
+}
+
+#account-created {
+    color: green;
+}
+
+#account-taken {
+    color: red;
+}
+
+.no-show {
+    display: none;
+}

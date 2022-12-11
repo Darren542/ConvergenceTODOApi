@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>API Test Page Login Page</title>
+
+  <link rel="stylesheet" href="./css/login.css" />
+</head>
+<body>
+  <header>
+    <h2>Test the API end points Login Page</h2>
+  </header>
+
+  <div id="body">
+    <div id="login">
+      <h2>Login</h2>
+      <div id="fill">
+        <label class="label">Username:</label>
+        <input type="text" class="input" id="username">
+        <label class="label">Password:</label>
+        <input type="password" class="input" id="password">
+        <button id="loginBtn">Login</button>
+        <button id="signupBtn">Sign Up</button>
+        <div id="no-match" class="no-show">Credentials are not valid</div>
+        <div id="account-taken" class="no-show">Account name taken</div>
+        <div id="account-created" class="no-show">New Account Created</div>
+      </div>
+  </div>
+
+  <script src="js/login.js"></script>
+</body>
+</html>
