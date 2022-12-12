@@ -76,6 +76,80 @@ export const getUserTODOs = (req, res) => {
 }
 
 //----------------------------------------------------------------------------
+// For getting TODO items by using usernames.
+//----------------------------------------------------------------------------
+export const searchForTODOs = (req, res) => {
+    var { todo_description, todo_type } = req.body;
+    todo_description = '%' + todo_description + '%'
+    let queryString;
+    if (!todo_type) {
+        queryString = `SELECT ti.itemID, ua.username, ti.todo_description, ti.todo_type, ti.creationTime
+        FROM todo_item as ti, user_accounts as ua
+        WHERE ti.ownerID = ua.userID AND ti.todo_description like ? OR ti.todo_type = ?;`
+    } else {
+        queryString = `SELECT ti.itemID, ua.username, ti.todo_description, ti.todo_type, ti.creationTime
+        FROM todo_item as ti, user_accounts as ua
+        WHERE ti.ownerID = ua.userID AND ti.todo_description like ? AND ti.todo_type = ?;`
+    }
+    if (req.session.loggedIn) {
+        function getTODOs() {
+            let connection;
+            let myPromise = new Promise((resolve, reject) => {    
+                connection = mysql.createConnection(databaseInfo);    
+                connection.connect(err => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(true);
+                    }
+                });   
+            });
+    
+            myPromise.then(
+                async function (value) {
+                    connection.query(queryString, [todo_description, todo_type], function (error, results, fields) {
+                        if (error) {
+                        }
+                        if (results && results[0] != null) {
+                            let responseJSON = {
+                                status: "success",
+                                msg: "Successfully retrieve TODOs",
+                                TODOs: results,
+                            }
+                            connection.end();
+                            res.send(responseJSON);
+                        } else {
+                            connection.end();
+                            let responseJSON = {
+                                status: "success",
+                                msg: "No Events were found"
+                            }
+                            res.send(responseJSON);
+                        }
+
+                    });
+    
+                },
+                function (error) {
+                    connection.end();
+                    //console.log(error);
+                    res.send({ status: "database-fail", msg: "database not found" });
+                }
+            );
+        }
+    
+        getTODOs();
+
+    } else {
+        let responseJSON = {
+            status: "fail",
+            msg: "user not logged in."
+        };
+        res.send(responseJSON);
+    }
+}
+
+//----------------------------------------------------------------------------
 // A get without any parameters will return all the TODO's.
 //----------------------------------------------------------------------------
 export const getAllTODOs = (req, res) => {

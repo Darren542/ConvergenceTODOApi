@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
 import mysql from 'mysql2';
-import {getUserTODOs, getAllTODOs, deleteTODO, patchTODO, createTODO} from '../controllers/todo.js'
+import {getUserTODOs, getAllTODOs, deleteTODO, patchTODO, createTODO, searchForTODOs} from '../controllers/todo.js'
 
 //All Routes here start with /todo
 
@@ -18,6 +18,10 @@ router.get('/', getAllTODOs);
 //----------------------------------------------------------------------------
 router.get('/user/:name', getUserTODOs);
 
+//----------------------------------------------------------------------------
+// For searching for TODOs
+//----------------------------------------------------------------------------
+router.get('/search', searchForTODOs);
 
 //----------------------------------------------------------------------------
 // For deleting TODOs
