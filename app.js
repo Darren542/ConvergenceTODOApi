@@ -14,6 +14,14 @@ app.use(bodyParser.json());
 import usersRoutes from './routes/users.js';
 import todoRoutes from './routes/todo.js';
 
+// The mySQL database being connected to.
+const databaseInfo = {
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "TODOAPI"
+}
+
 
 // Mapping file system paths to the app's virtual paths
 app.use("/js", express.static("./public/js"));
@@ -86,12 +94,7 @@ app.post("/login", function (req, res) {
         let connection;
         let myPromise = new Promise((resolve, reject) => {
 
-            connection = mysql.createConnection({
-                host: "localhost",
-                user: "root",
-                password: "",
-                database: "TODOAPI"
-            });
+            connection = mysql.createConnection(databaseInfo);
 
             connection.connect(err => {
                 if (err) {
@@ -209,12 +212,7 @@ app.post("/create-account", function (req, res) {
         let connection;
         let myPromise = new Promise((resolve, reject) => {
 
-            connection = mysql.createConnection({
-                host: "localhost",
-                user: "root",
-                password: "",
-                database: "TODOAPI"
-            });
+            connection = mysql.createConnection(databaseInfo);
 
             connection.connect(err => {
                 if (err) {
