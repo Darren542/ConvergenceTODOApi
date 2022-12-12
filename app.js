@@ -1,25 +1,35 @@
 "use strict";
 // The different Node Libraries being used.
-const express = require("express");
+import express from 'express';
 const app = express();
 app.use(express.json());
-const session = require("express-session");
-const fs = require("fs");
-const crypto = require("crypto");
-const mysql = require('mysql2');
+import session from 'express-session';
+import fs from 'fs';
+import crypto from 'crypto';
+import mysql from 'mysql2';
+import bodyParser from 'body-parser';
+
+app.use(bodyParser.json());
+
+import usersRoutes from './routes/users.js';
+import todoRoutes from './routes/todo.js';
+
 
 // Mapping file system paths to the app's virtual paths
 app.use("/js", express.static("./public/js"));
 app.use("/css", express.static("./public/css"));
 app.use(session(
     {
-        secret: "sdkf;lanmsflkwnfeowfnw",
+        secret: "sdkf;grdgsflksyjyowfnw",
         name: "TODO-Api-Session",
         resave: false,
-        saveUninitialized: true
+        saveUninitialized: true,
     })
 );
-
+// Routes dealing with useraccounts
+app.use('/users', usersRoutes);
+// Routes dealing with todo items
+app.use('/todo', todoRoutes);
 
 //-----------------------------------------------------------------------------------------
 // Hash Users Password for secure storage and to check for authenication.
@@ -72,7 +82,6 @@ app.get("/login", function (req, res) {
 // Starts a session for the user if they have logged is sucessfully.
 //----------------------------------------------------------------------------------------
 app.post("/login", function (req, res) {
-    console.log(req.body);
     function attemptLogin() {
         let connection;
         let myPromise = new Promise((resolve, reject) => {
@@ -152,6 +161,30 @@ app.get("/logout", function (req, res) {
                 res.status(400).send("Unable to log out")
             } else {
                 res.redirect("/");
+            }
+        });
+    }
+})
+
+//----------------------------------------------------------------------------------------
+// End the user session via logout post.
+//----------------------------------------------------------------------------------------
+app.post("/logout", function (req, res) {
+    if (req.session) {
+        req.session.destroy(function (error) {
+            if (error) {
+                let reponse = {
+                    status: "fail",
+                    msg: "unable to logout"
+                };
+                res.send(reponse);
+                res.status(400).send(reponse)
+            } else {
+                let reponse = {
+                    status: "success",
+                    msg: "Successfully Logged Out"
+                };
+                res.send(reponse);
             }
         });
     }
@@ -237,6 +270,8 @@ app.post("/create-account", function (req, res) {
     tryConnection()
 });
 
+
+
 // for page not found (i.e., 404)
 app.use(function (req, res, next) {
     res.status(404).send("<html><head><title>Error 404</title></head><body><p>Error 404</p><p>Nothing here.</p></body></html>");
@@ -245,5 +280,5 @@ app.use(function (req, res, next) {
 // RUN SERVER
 let port = 8000;
 app.listen(port, function () {
-    console.log("Example app listening on port " + port + "!");
+    console.log("Server running on port: " + port + "!");
 });
